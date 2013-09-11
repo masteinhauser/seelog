@@ -49,6 +49,17 @@ const (
 	OffStr      = "off"
 )
 
+// Log level string representations (used in syslog formatter)
+const (
+	TraceInt    = 8 // NOTE: Level does not actually exist in RFC3164 or RFC5424
+	DebugInt    = 7
+	InfoInt     = 6
+	WarnInt     = 4
+	ErrorInt    = 3
+	CriticalInt = 2
+	OffInt      = -1 // NOTE: Syslog uses '0' as "Emergency: system is unusable"
+)
+
 var levelToStringRepresentations = map[LogLevel]string{
 	TraceLvl:    TraceStr,
 	DebugLvl:    DebugStr,
@@ -59,7 +70,17 @@ var levelToStringRepresentations = map[LogLevel]string{
 	Off:         OffStr,
 }
 
-// LogLevelFromString parses a string and returns a corresponding log level, if sucessfull.
+var levelToIntegerRepresentations = map[LogLevel]int{
+	TraceLvl:    TraceInt,
+	DebugLvl:    DebugInt,
+	InfoLvl:     InfoInt,
+	WarnLvl:     WarnInt,
+	ErrorLvl:    ErrorInt,
+	CriticalLvl: CriticalInt,
+	Off:         OffInt,
+}
+
+// LogLevelFromString parses a string and returns a corresponding log level, if sucessful.
 func LogLevelFromString(levelStr string) (level LogLevel, found bool) {
 	for lvl, lvlStr := range levelToStringRepresentations {
 		if lvlStr == levelStr {
@@ -78,4 +99,25 @@ func (level LogLevel) String() string {
 	}
 
 	return ""
+}
+
+// LogLevelFromInteger parses a string and returns a corresponding log level, if sucessful.
+func LogLevelFromInteger(levelInt int) (level LogLevel, found bool) {
+	for lvl, lvlInt := range levelToIntegerRepresentations {
+		if lvlInt == levelInt {
+			return lvl, true
+		}
+	}
+
+	return 0, false
+}
+
+// LogLevelToInteger returns seelog string representation for a specified level. Returns -1 for invalid log levels.
+func (level LogLevel) Integer() int {
+	levelInt, ok := levelToIntegerRepresentations[level]
+	if ok {
+		return levelInt
+	}
+
+	return -1
 }

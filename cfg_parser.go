@@ -86,6 +86,7 @@ const (
 	connWriterAddrAttr              = "addr"
 	connWriterNetAttr               = "net"
 	connWriterReconnectOnMsgAttr    = "reconnectonmsg"
+	syslogFacilityId                = "facility"
 )
 
 type elementMapEntry struct {
@@ -124,6 +125,11 @@ func fillPredefinedFormats() error {
 		"json-debug-short": `{"t":%Ns,"l":"%Lev","m":"%Msg","p":"%RelFile","f":"%Func"}`,
 		"json":             `{"time":%Ns,"lev":"%Lev","msg":"%Msg"}`,
 		"json-short":       `{"t":%Ns,"l":"%Lev","m":"%Msg"}`,
+
+		"syslog-rfc3164":           `<%PriVal>%Date(Stamp) - [%LEVEL] %Msg`, // Priority(Severity + (Facility*8)), Unix Timestamp, Hostname, Message
+		"syslog-debug-rfc3164":     `<%PriVal>%Date(RFC3339) - - - - [%LEVEL] %RelFile:%Func.%Line %Msg`,
+		"syslog":           `<%PriVal>1 %Date(RFC3339) - - - - [%LEVEL] %Msg`, // Priority(Severity + (Facility*8)), Version, Datestamp, Hostname, App-name, Process ID, MsgID, Structured Data, Message
+		"syslog-debug":     `<%PriVal>1 %Date(RFC3339) - - - - [%LEVEL] %RelFile:%Func.%Line %Msg`,
 
 		"debug":       `[%LEVEL] %RelFile:%Func.%Line %Date %Time %Msg%n`,
 		"debug-short": `[%LEVEL] %Date %Time %Msg%n`,
